@@ -12,6 +12,8 @@ import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import de.xcase.filtercase2.components.AppRouterLayout;
 import de.xcase.filtercase2.components.Card;
+import de.xcase.filtercase2.components.RuntimeVariables;
+import org.springframework.beans.factory.annotation.Autowired;
 
 @Route(value = StatisticsView.VIEW_NAME, layout = AppRouterLayout.class)
 @PageTitle(value = "Statistics")
@@ -20,13 +22,13 @@ import de.xcase.filtercase2.components.Card;
 public class StatisticsView extends BaseView {
     public static final String VIEW_NAME = "StatisticsView";
 
-    public StatisticsView() {
+    public StatisticsView(@Autowired RuntimeVariables runtimeVariables) {
 
         HorizontalLayout hl = new HorizontalLayout();
 
         Card cardpanel = new Card("Detaillierter Überlick");
         cardpanel.getElement().getStyle().set("width", "100%");
-        cardpanel.add(statistic());
+        cardpanel.add(statistic(runtimeVariables));
 
         hl.add(cardpanel);
         hl.setSizeFull();
@@ -34,17 +36,17 @@ public class StatisticsView extends BaseView {
 
     }
 
-    public Component statistic() {
+    public Component statistic(RuntimeVariables runtimeVariables) {
 
         VerticalLayout content = new VerticalLayout();
         content.setSizeFull();
         content.setDefaultHorizontalComponentAlignment(FlexComponent.Alignment.AUTO);
 
-        Label message1 = new Label("Zeitpunkt letzter Abruf: 15.11.2019");
-        Label message2 = new Label("Ingesamt abgerufen: 98");
-        Label message3 = new Label("Gelöscht: 54");
-        Label message4 = new Label("Verteilt: 42");
-        Label message5 = new Label("Uneindeutig: 2");
+        Label message1 = new Label(runtimeVariables.getLastRun() == null ? "Seit Start hat noch kein Suchlauf stattgefunden." : runtimeVariables.getLastRun().toString());
+        Label message2 = new Label(String.valueOf(runtimeVariables.getTotalMails()));
+        Label message3 = new Label(String.valueOf(runtimeVariables.getDeletedMails()));
+        Label message4 = new Label(String.valueOf(runtimeVariables.getDistributedMails()));
+        Label message5 = new Label(String.valueOf(runtimeVariables.getAmbiguousMails()));
 
         content.add(message1);
         content.add(message2);

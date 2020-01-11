@@ -70,7 +70,7 @@ public class StartsiteView extends BaseView {
         VerticalLayout content = new VerticalLayout();
         content.setSizeFull();
 
-        Label message1 = new Label(runtimeVariables.getLastRun() == null ? "Seit Start keinen Lauf" : runtimeVariables.getLastRun().toString());
+        Label message1 = new Label(runtimeVariables.getLastRun() == null ? "Seit Start hat noch kein Suchlauf stattgefunden." : runtimeVariables.getLastRun().toString());
         Label message2 = new Label(String.valueOf(runtimeVariables.getTotalMails()));
         Label message3 = new Label(String.valueOf(runtimeVariables.getDeletedMails()));
         Label message4 = new Label(String.valueOf(runtimeVariables.getDistributedMails()));
@@ -101,7 +101,7 @@ public class StartsiteView extends BaseView {
         content.setSizeFull();
 
         Button button = new Button("Starten");
-        Label message1 = new Label(runtimeVariables.getLastManualRun() == null ? "Seit Start keinen Lauf" : runtimeVariables.getLastManualRun().toString());
+        Label message1 = new Label(runtimeVariables.getLastManualRun() == null ? "Seit Start hat noch kein Suchlauf stattgefunden." : runtimeVariables.getLastManualRun().toString());
 
         content.add(button);
         content.add(message1);
