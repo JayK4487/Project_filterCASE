@@ -1,0 +1,8 @@
+:host [part~='navbar'] {
+    background-color: rgb(32, 91, 158);
+}
+
+:host [part~='navbar']::before {
+    background: transparent;
+}
+

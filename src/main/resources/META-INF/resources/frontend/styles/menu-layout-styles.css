@@ -1,0 +1,17 @@
+paper-card {
+    width: 25%
+}
+
+p , hr {
+    color: #9e9494;
+    margin-bottom: -5px;
+}
+
+a {
+    text-decoration: none;
+    margin-left: 20px;
+}
+
+vaadin-drawer-toggle {
+    color: white;
+}
