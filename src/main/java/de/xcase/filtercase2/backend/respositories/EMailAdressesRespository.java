@@ -1,7 +1,9 @@
 package de.xcase.filtercase2.backend.respositories;
 
-import de.xcase.filtercase2.backend.entities.EMailAdresses;
+import de.xcase.filtercase2.backend.entities.EMailAdresse;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
-public interface EMailAdressesRespository extends JpaRepository<EMailAdresses, Long> {
+@Repository
+public interface EMailAdressesRespository extends JpaRepository<EMailAdresse, Long> {
 }

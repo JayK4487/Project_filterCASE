@@ -1,17 +1,15 @@
 package de.xcase.filtercase2.views;
 
-import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.dependency.JsModule;
 import com.vaadin.flow.component.dependency.NpmPackage;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.icon.VaadinIcon;
-import com.vaadin.flow.component.orderedlayout.FlexLayout;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
-import de.xcase.filtercase2.backend.entities.EMailAdresses;
+import de.xcase.filtercase2.backend.entities.EMailAdresse;
 import de.xcase.filtercase2.backend.enums.Department;
 import de.xcase.filtercase2.backend.respositories.EMailAdressesRespository;
 import de.xcase.filtercase2.components.AppRouterLayout;
@@ -33,22 +31,22 @@ public class NotificationView extends BaseView {
     private final Card cPanel = new Card("Empfänger der Benachrichtigungen");
     private final VerticalLayout vlCardMain = new VerticalLayout();
 
-    private final Grid<EMailAdresses> grNotifications = new Grid<>();
+    private final Grid<EMailAdresse> grNotifications = new Grid<>();
     private final Button btAdd = new Button("+");
 
-    private List<EMailAdresses> eMailAdressesList = new ArrayList<>();
+    private List<EMailAdresse> eMailAdresseList = new ArrayList<>();
 
     public NotificationView(@Autowired EMailAdressesRespository eMailAdressesRespository) {
         cPanel.getElement().getStyle().set("width", "100%");
 
-        eMailAdressesList.addAll(eMailAdressesRespository.findAll());
+        eMailAdresseList.addAll(eMailAdressesRespository.findAll());
 
-        grNotifications.addColumn(EMailAdresses::getUser).setHeader("User");
-        grNotifications.addColumn(EMailAdresses::getEmailAddress).setHeader("E-Mailadresse");
-        grNotifications.addColumn(eMailAdresses -> Department.valueOf(eMailAdresses.getDepartment()).getName()).setHeader("Abteilung");
+        grNotifications.addColumn(EMailAdresse::getUser).setHeader("User");
+        grNotifications.addColumn(EMailAdresse::getEmailAddress).setHeader("E-Mailadresse");
+        grNotifications.addColumn(eMailAdresse -> Department.valueOf(eMailAdresse.getDepartment()).getName()).setHeader("Abteilung");
         grNotifications.addComponentColumn(keyword -> new Button("Bearbeiten"));
         grNotifications.addComponentColumn(keyword -> new Button(VaadinIcon.TRASH.create()));
-        grNotifications.setItems(eMailAdressesList);
+        grNotifications.setItems(eMailAdresseList);
         grNotifications.getDataProvider().refreshAll();
 
         vlCardMain.getElement().getStyle().set("length", "100%");

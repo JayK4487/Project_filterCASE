@@ -14,7 +14,7 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.timepicker.TimePicker;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
-import de.xcase.filtercase2.backend.entities.EMailAdresses;
+import de.xcase.filtercase2.backend.entities.EMailAdresse;
 import de.xcase.filtercase2.backend.entities.Keyword;
 import de.xcase.filtercase2.backend.entities.UsedFolders;
 import de.xcase.filtercase2.backend.respositories.KeywordRepository;
@@ -107,10 +107,10 @@ public class AdministrationView extends BaseView {
         VerticalLayout content = new VerticalLayout();
         content.getElement().getStyle().set("length", "50%");
 
-        Grid<EMailAdresses> gridNotifications = new Grid();
-        gridNotifications.addColumn(EMailAdresses::getUser).setHeader("User");
-        gridNotifications.addColumn(EMailAdresses::getEmailAddress).setHeader("E-Mailadresse");
-        gridNotifications.addColumn(EMailAdresses::getDepartment).setHeader("Abteilung");
+        Grid<EMailAdresse> gridNotifications = new Grid();
+        gridNotifications.addColumn(EMailAdresse::getUser).setHeader("User");
+        gridNotifications.addColumn(EMailAdresse::getEmailAddress).setHeader("E-Mailadresse");
+        gridNotifications.addColumn(EMailAdresse::getDepartment).setHeader("Abteilung");
 
         content.add(gridNotifications);
 
