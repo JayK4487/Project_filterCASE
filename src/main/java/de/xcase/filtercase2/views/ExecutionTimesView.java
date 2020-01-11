@@ -14,8 +14,10 @@ import de.xcase.filtercase2.components.AppRouterLayout;
 import de.xcase.filtercase2.components.Card;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import javax.persistence.EntityNotFoundException;
 import java.time.LocalTime;
 import java.util.List;
+import java.util.Optional;
 
 @Route(value = ExecutionTimesView.VIEW_NAME, layout = AppRouterLayout.class)
 @PageTitle(value = "")
@@ -29,37 +31,47 @@ public class ExecutionTimesView extends BaseView {
     private final VerticalLayout vlCardMain = new VerticalLayout();
     private final Card cPanel = new Card("Festlegen der Ausführungszeiten");
 
+    private Optional<CronJob> job1;
+    private Optional<CronJob> job2;
+
     private final TimePicker tpFistExecution = new TimePicker("1. Neuen Ausführungszeitpunkt festlegen:");
     private final TimePicker tpSecondExecution = new TimePicker("2. Neuen Ausführungszeitpunkt festlegen:");
 
     private Label lbFirst = new Label("1. Ausführungszeitpunkt: Noch nicht gesetzt!");
     private Label lbSecond = new Label("2. Ausführungszeitpunkt: Noch nicht gesetzt!");
 
-    private CronJobRepository cronJobRepository;
-
     public ExecutionTimesView(@Autowired CronJobRepository cronJobRepository) {
-        this.cronJobRepository = cronJobRepository;
         cPanel.getElement().getStyle().set("width", "100%");
 
-        List<CronJob> cronJobs = cronJobRepository.findAll();
-        boolean first = true;
-        for (CronJob cronJob : cronJobs) {
-            if (first) {
-                lbFirst.setText("1. Ausführungszeitpunkt: " + convertLocalTimeToString(cronJob.getExecution()));
-                first = false;
-            } else {
-                lbSecond.setText("2. Ausführungszeitpunkt: " + convertLocalTimeToString(cronJob.getExecution()));
-            }
-        }
+        job1 = cronJobRepository.findById(1L);
+
+        job2 = cronJobRepository.findById(2L);
+
+        job1.ifPresent(cronJob -> {
+            tpFistExecution.setValue(cronJob.getExecution());
+            lbFirst.setText("1. Ausführungszeitpunkt: " + cronJob.getExecution());
+        });
+        job2.ifPresent(cronJob -> {
+            tpSecondExecution.setValue(cronJob.getExecution());
+            lbSecond.setText("2. Ausführungszeitpunkt: " + cronJob.getExecution());
+        });
 
         tpFistExecution.addValueChangeListener(valueChangeEvent -> {
-            lbFirst.setText("1. Ausführungszeitpunkt: "
-                    + convertLocalTimeToString(createCronJob(1L, valueChangeEvent.getValue()).getExecution()));
+            lbFirst.setText("1. Ausführungszeitpunkt: " + valueChangeEvent.getValue());
+            if (job1.isEmpty()) {
+                job1 = Optional.of(new CronJob());
+            }
+            job1.get().setExecution(valueChangeEvent.getValue());
+            cronJobRepository.save(job1.get());
         });
 
         tpSecondExecution.addValueChangeListener(valueChangeEvent -> {
-            lbSecond.setText("2. Ausführungszeitpunkt: "
-                    + convertLocalTimeToString(createCronJob(2L, valueChangeEvent.getValue()).getExecution()));
+            lbSecond.setText("2. Ausführungszeitpunkt: " + valueChangeEvent.getValue());
+            if (job2.isEmpty()) {
+                job2 = Optional.of(new CronJob());
+            }
+            job2.get().setExecution(valueChangeEvent.getValue());
+            cronJobRepository.save(job2.get());
         });
 
         vlCardMain.add(tpFistExecution);
@@ -74,20 +86,7 @@ public class ExecutionTimesView extends BaseView {
 
     }
 
-
     private String convertLocalTimeToString(final LocalTime localTime) {
         return localTime.getHour() + ":" + localTime.getMinute();
-    }
-
-    private CronJob createCronJob(final Long id, final LocalTime localTime) {
-        CronJob cronJob = new CronJob();
-        cronJob.setId(id);
-        cronJob.setExecution(localTime);
-
-        if (cronJobRepository.existsById(id)) {
-            cronJobRepository.deleteById(id);
-        }
-        cronJobRepository.save(cronJob);
-        return cronJob;
     }
 }
