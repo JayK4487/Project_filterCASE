@@ -14,7 +14,7 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.timepicker.TimePicker;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
-import de.xcase.filtercase2.backend.entities.EMailAdresse;
+import de.xcase.filtercase2.backend.entities.EMailAdress;
 import de.xcase.filtercase2.backend.entities.Keyword;
 import de.xcase.filtercase2.backend.entities.UsedFolders;
 import de.xcase.filtercase2.backend.respositories.KeywordRepository;
@@ -58,8 +58,6 @@ public class AdministrationView extends BaseView {
         hl2.setWidthFull();
 
         add(hl1, hl2);
-
-       //TODO: DELETE repository.findByUserKeyword("jsauer");
     }
 
     private Component changeExecutionTime() {
@@ -107,10 +105,10 @@ public class AdministrationView extends BaseView {
         VerticalLayout content = new VerticalLayout();
         content.getElement().getStyle().set("length", "50%");
 
-        Grid<EMailAdresse> gridNotifications = new Grid();
-        gridNotifications.addColumn(EMailAdresse::getUser).setHeader("User");
-        gridNotifications.addColumn(EMailAdresse::getEmailAddress).setHeader("E-Mailadresse");
-        gridNotifications.addColumn(EMailAdresse::getDepartment).setHeader("Abteilung");
+        Grid<EMailAdress> gridNotifications = new Grid();
+        gridNotifications.addColumn(EMailAdress::getUser).setHeader("User");
+        gridNotifications.addColumn(EMailAdress::getEmailAddress).setHeader("E-Mailadresse");
+        gridNotifications.addColumn(EMailAdress::getDepartment).setHeader("Abteilung");
 
         content.add(gridNotifications);
 

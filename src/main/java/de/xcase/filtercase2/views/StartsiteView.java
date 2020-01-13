@@ -10,15 +10,14 @@ import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
-import de.xcase.filtercase2.backend.entities.EMailAdresse;
+import de.xcase.filtercase2.backend.entities.EMailAdress;
 import de.xcase.filtercase2.backend.respositories.EMailAdressesRespository;
 import de.xcase.filtercase2.backend.respositories.KeywordRepository;
+import de.xcase.filtercase2.backend.respositories.LDAPRepository;
 import de.xcase.filtercase2.components.AppRouterLayout;
 import de.xcase.filtercase2.components.Card;
 import de.xcase.filtercase2.components.RuntimeVariables;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import java.time.LocalDateTime;
 
 /**
  * Home site of the app.
@@ -28,12 +27,12 @@ import java.time.LocalDateTime;
 @NpmPackage(value = "@polymer/paper-card", version = "3.0.1")
 @JsModule("@polymer/paper-card/paper-card.js")
 @CssImport("styles/menu-layout-styles.css")
-
 public class StartsiteView extends BaseView {
 
     public static final String VIEW_NAME = "StartsiteView";
 
-    public StartsiteView(@Autowired RuntimeVariables runtimeVariables, @Autowired KeywordRepository keywordRepository, @Autowired EMailAdressesRespository eMailAdressesRespository) {
+    public StartsiteView(@Autowired LDAPRepository ldapRepository, @Autowired RuntimeVariables runtimeVariables, @Autowired KeywordRepository keywordRepository, @Autowired EMailAdressesRespository eMailAdressesRespository) {
+        ldapRepository.findAll();
 
         HorizontalLayout hl1 = new HorizontalLayout();
 
@@ -113,7 +112,7 @@ public class StartsiteView extends BaseView {
         VerticalLayout content = new VerticalLayout();
         content.setSizeFull();
 
-        for (EMailAdresse emailAddress: eMailAdressesRespository.findAll()) {
+        for (EMailAdress emailAddress: eMailAdressesRespository.findAll()) {
             Label emailLabel = new Label(emailAddress.getEmailAddress());
             content.add(emailLabel);
         }

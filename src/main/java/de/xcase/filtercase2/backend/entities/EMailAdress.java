@@ -9,7 +9,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
 @Entity
-public class EMailAdresse {
+public class EMailAdress {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
