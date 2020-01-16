@@ -20,9 +20,7 @@ import de.xcase.filtercase2.components.AppRouterLayout;
 import de.xcase.filtercase2.components.Card;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.WeakHashMap;
+import java.util.*;
 
 @Route(value = KeywordView.VIEW_NAME, layout = AppRouterLayout.class)
 @PageTitle(value = "Suchbegriffe")
@@ -38,7 +36,6 @@ public class KeywordView extends BaseView {
 
     private final Button btAdd = new Button("+");
     private final Grid<Keyword> grKeywords = new Grid<>();
-
 
     // For Editor
     private final Binder<Keyword> binder = new Binder<>(Keyword.class);
@@ -77,10 +74,9 @@ public class KeywordView extends BaseView {
                 .setEditorComponent(editKeywordField)
                 .setHeader("Schlüsselbegriff");
         grKeywords.addColumn(keyword -> keyword.getUserKeyword() == null ? "Kein Name hinterlegt" : keyword.getUserKeyword())
-                .setEditorComponent(editKeywordField)
+                .setEditorComponent(editUserField)
                 .setHeader("User");
         grKeywords.addComponentColumn(keyword -> {
-            //Todo Is not working properly
             Button button = new Button("Bearbeiten");
             button.addClickListener(click -> {
                 grKeywords.getEditor().editItem(keyword);

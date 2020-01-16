@@ -17,13 +17,12 @@ import org.springframework.stereotype.Component;
 public class AddKeywordDialog extends Dialog {
     private final FormLayout formLayout = new FormLayout();
     private final ComboBox<Keyword> cbKeyword = new ComboBox<>();
-    private final Button btAdd= new Button("Speichern");
+    private final Button btAdd = new Button("Speichern");
     private final Button btCancel = new Button("Abbrechen");
 
     @Autowired
     private KeywordRepository keywordRepository;
 
-    //Todo Saving new keyword is not working
     public AddKeywordDialog(@Autowired KeywordRepository keywordRepository) {
         cbKeyword.setItems(keywordRepository.findAll());
         cbKeyword.setItemLabelGenerator(Keyword::getKeyword);
@@ -35,6 +34,7 @@ public class AddKeywordDialog extends Dialog {
             }
         });
 
+        //TODO Its not possible to save a custom new keyword in database
         btAdd.setEnabled(false);
         btAdd.addClickListener(event -> {
             Keyword keyword = new Keyword();
@@ -46,8 +46,30 @@ public class AddKeywordDialog extends Dialog {
                 Notification.show("Erfolgreich gespeichert");
                 this.close();
             }
-            //keyword.setUserKeyword(cbKeyword.getValue().getUserKeyword());
         });
+
+        /*
+        btAdd.addClickListener(event -> {
+            Keyword keyword = new Keyword();
+            keyword.setKeyword(cbKeyword.getValue().getKeyword());
+            if(keywordRepository.findByKeyword(cbKeyword.getValue().getKeyword()) != null) {
+                Notification.show("Dieser Eintrag existiert bereits");
+            } else {
+                keywordRepository.save(keyword);
+                Notification.show("Erfolgreich gespeichert");
+                this.close();
+            }
+            cbKeyword.addValueChangeListener(valueChangeEvent -> {
+                if (valueChangeEvent.getValue() == null) {
+                    Notification.show("Keine Auswahl getroffen.");
+                } else {
+                    Notification.show("Getroffene Auswahl: " + valueChangeEvent.getValue());
+                    keywordRepository.save(cbKeyword.getValue());
+                    this.close();
+                }
+            });
+        });
+         */
         btCancel.addClickListener(event -> this.close());
 
         formLayout.addFormItem(cbKeyword, "Schlüsselbegriff");

@@ -1,23 +1,19 @@
 package de.xcase.filtercase2.views;
 
 
-import com.vaadin.flow.component.ClickEvent;
 import com.vaadin.flow.component.Key;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.formlayout.FormLayout;
-import com.vaadin.flow.component.html.Label;
+import com.vaadin.flow.component.html.Image;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.PasswordField;
 import com.vaadin.flow.component.textfield.TextField;
-import com.vaadin.flow.data.binder.Binder;
 import com.vaadin.flow.router.BeforeEnterEvent;
-import com.vaadin.flow.router.BeforeEnterObserver;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
-import de.xcase.filtercase2.components.AppRouterLayout;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,6 +38,7 @@ public class LoginView extends BaseView {
     private final PasswordField pfLoginPassword = new PasswordField();
     private final Button btnLogin = new Button("Login", new Icon(VaadinIcon.SIGN_IN));
     private final FormLayout flLogin = new FormLayout();
+    private final Image iLogo = new Image("filtercaselogo.jpg", "filterCASE");
 
     @Autowired
     private AuthenticationManager authManager;
@@ -49,10 +46,14 @@ public class LoginView extends BaseView {
     private HttpServletRequest req;
 
     public LoginView() {
+        iLogo.setHeight("44px");
+
+
         tfUsername.setPlaceholder("Nutzername");
         pfLoginPassword.setPlaceholder("Passwort");
 
         flLogin.setResponsiveSteps(new FormLayout.ResponsiveStep(null, 1));
+        flLogin.add(iLogo); //TODO Icon is not shown properly
         flLogin.addFormItem(tfUsername, "Nutzername:");
         flLogin.addFormItem(pfLoginPassword, "Passwort:");
         flLogin.addFormItem(btnLogin, "");
