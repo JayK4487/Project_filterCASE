@@ -11,7 +11,6 @@ import de.xcase.filtercase2.backend.entities.Keyword;
 import de.xcase.filtercase2.backend.respositories.KeywordRepository;
 import de.xcase.filtercase2.backend.respositories.LDAPRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Component;

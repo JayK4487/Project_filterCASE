@@ -46,8 +46,8 @@ public class LoginView extends BaseView {
     private HttpServletRequest req;
 
     public LoginView() {
-        iLogo.setHeight("44px");
-
+        iLogo.setMaxHeight("250px");
+        iLogo.setMaxWidth("250px");
 
         tfUsername.setPlaceholder("Nutzername");
         pfLoginPassword.setPlaceholder("Passwort");
