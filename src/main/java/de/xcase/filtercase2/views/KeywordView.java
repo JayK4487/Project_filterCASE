@@ -21,7 +21,9 @@ import de.xcase.filtercase2.components.AppRouterLayout;
 import de.xcase.filtercase2.components.Card;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.WeakHashMap;
 
 @Route(value = KeywordView.VIEW_NAME, layout = AppRouterLayout.class)
 @PageTitle(value = "Suchbegriffe")

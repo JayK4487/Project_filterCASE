@@ -15,8 +15,8 @@ import com.vaadin.flow.component.timepicker.TimePicker;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import de.xcase.filtercase2.backend.entities.EMailAdress;
+import de.xcase.filtercase2.backend.entities.Folder;
 import de.xcase.filtercase2.backend.entities.Keyword;
-import de.xcase.filtercase2.backend.entities.UsedFolders;
 import de.xcase.filtercase2.backend.respositories.KeywordRepository;
 import de.xcase.filtercase2.components.AppRouterLayout;
 import de.xcase.filtercase2.components.Card;
@@ -31,6 +31,7 @@ public class AdministrationView extends BaseView {
     public static final String VIEW_NAME = "administration";
 
     public AdministrationView(@Autowired KeywordRepository repository) {
+
 
         HorizontalLayout hl1 = new HorizontalLayout();
 
@@ -121,10 +122,10 @@ public class AdministrationView extends BaseView {
         VerticalLayout content = new VerticalLayout();
         content.getElement().getStyle().set("length", "50%");
 
-        Grid<UsedFolders> gridFolders = new Grid();
-        gridFolders.addColumn(UsedFolders::getSourceFolder).setHeader("Quellordner");
-        gridFolders.addColumn(UsedFolders::getSourceFolder).setHeader("Zielordner");
-       // gridFolders.addColumn(UsedFolder::getUserFolder).setHeader("Abteilung");
+        Grid<Folder> gridFolders = new Grid();
+        gridFolders.addColumn(Folder::getSourceFolder).setHeader("Quellordner");
+        gridFolders.addColumn(Folder::getSourceFolder).setHeader("Zielordner");
+       // gridFolders.addColumn(Folder::getUserFolder).setHeader("Abteilung");
 
         content.add(gridFolders);
 
@@ -151,5 +152,8 @@ public class AdministrationView extends BaseView {
 
         FlexLayout ftimePicker = new FlexLayout();
         return timePicker;
+
+
     }
+
 }

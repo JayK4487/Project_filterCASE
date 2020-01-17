@@ -4,19 +4,26 @@ import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.dependency.JsModule;
 import com.vaadin.flow.component.dependency.NpmPackage;
 import com.vaadin.flow.component.grid.Grid;
+import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.component.textfield.TextField;
+import com.vaadin.flow.data.binder.Binder;
+import com.vaadin.flow.data.binder.PropertyId;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
-import de.xcase.filtercase2.backend.entities.UsedFolders;
-import de.xcase.filtercase2.backend.respositories.UsedFolderRepository;
+import de.xcase.filtercase2.backend.entities.Folder;
+import de.xcase.filtercase2.backend.respositories.LDAPRepository;
+import de.xcase.filtercase2.backend.respositories.FolderRepository;
+import de.xcase.filtercase2.components.AddFolderDialog;
 import de.xcase.filtercase2.components.AppRouterLayout;
 import de.xcase.filtercase2.components.Card;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.WeakHashMap;
 
 @Route(value = FolderView.VIEW_NAME, layout = AppRouterLayout.class)
 @PageTitle(value = "Ordnerstruktur")
@@ -30,27 +37,84 @@ public class FolderView extends BaseView {
     private final Card cPanel = new Card("Bearbeitung der Quell- und Zielordner");
     private final VerticalLayout vlCardMain = new VerticalLayout();
 
-    private final Grid<UsedFolders> grUsedFolder = new Grid<>();
+    private final Grid<Folder> grUsedFolder = new Grid<>();
     private final Button btAdd = new Button("+");
 
-    private List<UsedFolders> usedFolderList = new ArrayList<>();
+    // For Editor
+    private final Binder<Folder> binder = new Binder<>(Folder.class);
+    @PropertyId("sourceFolder")
+    private final TextField editSourceFolderField = new TextField();
+    @PropertyId("destinationFolder")
+    private final TextField editDestinationFolderField = new TextField();
+    @PropertyId("user")
+    private final TextField editUserField = new TextField();
+    Button btEditorSave = new Button("Speichern");
+    Button btEditorCancel = new Button("Abbrechen");
+    Collection<Button> editButtons = Collections.newSetFromMap(new WeakHashMap<>());
 
-    public FolderView(@Autowired UsedFolderRepository usedFolderRepository) {
+    public FolderView(@Autowired FolderRepository usedFolderRepository, @Autowired AddFolderDialog folderDialog, @Autowired LDAPRepository ldapRepository) {
+        binder.forMemberField(editSourceFolderField);
+        binder.forMemberField(editDestinationFolderField);
+        binder.forMemberField(editUserField);
+        binder.bindInstanceFields(this);
+
+        btEditorSave.addClickListener(click -> grUsedFolder.getEditor().save());
+        btEditorCancel.addClickListener(click -> grUsedFolder.getEditor().cancel());
+
+        Div editorButtons = new Div(btEditorSave, btEditorCancel);
+
+        folderDialog.addOpenedChangeListener(changeEvent -> {
+           if (!changeEvent.isOpened()) {
+               //Refresh on close
+               grUsedFolder.setItems(usedFolderRepository.findAll());
+           }
+        });
+
+        btAdd.addClickListener(click -> {
+            folderDialog.open();
+        });
+
         cPanel.getElement().getStyle().set("width", "100%");
 
-        usedFolderList.addAll(usedFolderRepository.findAll());
-
-        grUsedFolder.addColumn(UsedFolders::getSourceFolder).setHeader("Quellordner");
-        grUsedFolder.addColumn(UsedFolders::getDestinationFolder).setHeader("Zielordner");
-        grUsedFolder.addColumn(UsedFolders::getUser).setHeader("Gesetzt durch");
-        grUsedFolder.addComponentColumn(keyword -> new Button("Bearbeiten"));
-        grUsedFolder.addComponentColumn(keyword -> new Button(VaadinIcon.TRASH.create()));
-        grUsedFolder.setItems(usedFolderList);
+        grUsedFolder.addColumn(usedFolder -> usedFolder.getSourceFolder() == null ? "Kein Ordner hinterlegt" : usedFolder.getSourceFolder())
+                .setEditorComponent(editSourceFolderField)
+                .setHeader("Quellordner");
+        grUsedFolder.addColumn(usedFolder ->  usedFolder.getDestinationFolder() == null ? "Kein Zielordner hinterlegt" : usedFolder.getDestinationFolder())
+                .setEditorComponent(editDestinationFolderField)
+                .setHeader("Zielordner");
+        grUsedFolder.addColumn(usedFolder -> usedFolder.getUser() == null ? "Kein Name hinterlegt" : usedFolder.getUser())
+                .setEditorComponent(editUserField)
+                .setHeader("User");
+        grUsedFolder.addComponentColumn(usedFolder -> {
+           Button button = new Button("Bearbeiten");
+           button.addClickListener(click -> {
+               grUsedFolder.getEditor().editItem(usedFolder);
+           });
+           button.setEnabled(!grUsedFolder.getEditor().isOpen());
+           editButtons.add(button);
+           return button;
+        }).setEditorComponent(editorButtons);
+           grUsedFolder.addComponentColumn(usedFolder -> {
+               Button button = new Button (VaadinIcon.TRASH.create());
+               button.addClickListener(click -> {
+                  usedFolderRepository.delete(usedFolder);
+                  grUsedFolder.setItems(usedFolderRepository.findAll());
+               });
+               return button;
+        });
+        grUsedFolder.setItems(usedFolderRepository.findAll());
         grUsedFolder.getDataProvider().refreshAll();
+
+        grUsedFolder.getEditor().setBuffered(true);
+        grUsedFolder.getEditor().setBinder(binder);
+        grUsedFolder.getEditor().addOpenListener(openEvent -> editButtons.forEach(button -> button.setEnabled(!grUsedFolder.getEditor().isOpen())));
+        grUsedFolder.getEditor().addCloseListener(closeEvent -> editButtons.forEach(button -> button.setEnabled(!grUsedFolder.getEditor().isOpen())));
+        grUsedFolder.getEditor().addSaveListener(saveEvent -> usedFolderRepository.save(saveEvent.getItem()));
 
         vlCardMain.getElement().getStyle().set("length", "100%");
         vlCardMain.add(btAdd, grUsedFolder);
 
+        cPanel.getElement().getStyle().set("length", "100%");
         cPanel.add(vlCardMain);
 
         hlMain.add(cPanel);

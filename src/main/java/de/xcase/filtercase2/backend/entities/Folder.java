@@ -7,23 +7,23 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
 @Entity
-public class UsedFolders {
+public class Folder {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     /**
-     * Source folder that is used
-     */
-    @Column(name = "sourceFolder")
-    private String sourceFolder;
-
-    /**
      * Destination folder
      */
     @Column(name = "destinationFolder")
     private String destinationFolder;
+
+    /**
+     * Source folder that is used
+     */
+    @Column(name = "sourceFolder")
+    private String sourceFolder;
 
     /**
      * User that set the folders
