@@ -83,7 +83,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
              more info: https://docs.spring.io/spring-security/site/docs/4.0.x/reference/html/anonymous.html
              */
     }
-    /**
+
     @Override
     protected void configure(AuthenticationManagerBuilder auth) {
         ActiveDirectoryLdapAuthenticationProvider activeDirectoryLdapAuthenticationProvider =
@@ -96,7 +96,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         activeDirectoryLdapAuthenticationProvider.setConvertSubErrorCodesToExceptions(true);
         auth.authenticationProvider(activeDirectoryLdapAuthenticationProvider);
     }
-    **/
+
     /**
      * Checks if a class is a public navigation target.
      *
@@ -142,11 +142,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 && Stream.of(ServletHelper.RequestType.values()).anyMatch(r -> r.getIdentifier().equals(parameterValue));
     }
 
-    /**
+
     @Bean
     public ActiveDirectoryLdapAuthenticationProvider activeDirectoryLdapAuthenticationProvider() {
         return new ActiveDirectoryLdapAuthenticationProvider(null, "ldap://192.168.108.21:389/");
     }
-    **/
+
 
 }
