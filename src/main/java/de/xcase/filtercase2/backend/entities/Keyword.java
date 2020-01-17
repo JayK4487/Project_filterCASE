@@ -22,8 +22,8 @@ public class Keyword {
     /**
      * User who set the keyword
      */
-    @Column(name = "userKeyword")
-    private String userKeyword;
+    @Column(name = "userName")
+    private String userName;
 
     /**
      * Boolean to get the status
@@ -47,12 +47,12 @@ public class Keyword {
         this.keyword = keyword;
     }
 
-    public String getUserKeyword() {
-        return userKeyword;
+    public String getUserName() {
+        return userName;
     }
 
-    public void setUserKeyword(String userKeyword) {
-        this.userKeyword = userKeyword;
+    public void setUserName(String userName) {
+        this.userName = userName;
     }
 
     public Boolean getStatus() {

@@ -38,7 +38,7 @@ public class LoginView extends BaseView {
     private final PasswordField pfLoginPassword = new PasswordField();
     private final Button btnLogin = new Button("Login", new Icon(VaadinIcon.SIGN_IN));
     private final FormLayout flLogin = new FormLayout();
-    private final Image iLogo = new Image("filtercaselogo.jpg", "filterCASE");
+    private final Image iLogo = new Image("frontend/img/filtercaselogo.jpg", "filterCASE");
 
     @Autowired
     private AuthenticationManager authManager;
@@ -53,7 +53,7 @@ public class LoginView extends BaseView {
         pfLoginPassword.setPlaceholder("Passwort");
 
         flLogin.setResponsiveSteps(new FormLayout.ResponsiveStep(null, 1));
-        flLogin.add(iLogo); //TODO Icon is not shown properly
+        flLogin.add(iLogo);
         flLogin.addFormItem(tfUsername, "Nutzername:");
         flLogin.addFormItem(pfLoginPassword, "Passwort:");
         flLogin.addFormItem(btnLogin, "");

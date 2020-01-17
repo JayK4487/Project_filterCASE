@@ -35,7 +35,7 @@ public class AppRouterLayout extends AppLayout {
     HttpServletRequest httpServletRequest;
 
     public AppRouterLayout() {
-        Image iLogo = new Image("filtercaselogo.jpg", "filterCASE");
+        Image iLogo = new Image("frontend/img/filtercaselogo.jpg", "filterCASE");
         iLogo.setHeight("44px");
 
         addToNavbar(new DrawerToggle(), iLogo);

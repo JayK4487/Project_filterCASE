@@ -15,6 +15,7 @@ import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import de.xcase.filtercase2.backend.entities.Keyword;
 import de.xcase.filtercase2.backend.respositories.KeywordRepository;
+import de.xcase.filtercase2.backend.respositories.LDAPRepository;
 import de.xcase.filtercase2.components.AddKeywordDialog;
 import de.xcase.filtercase2.components.AppRouterLayout;
 import de.xcase.filtercase2.components.Card;
@@ -41,13 +42,13 @@ public class KeywordView extends BaseView {
     private final Binder<Keyword> binder = new Binder<>(Keyword.class);
     @PropertyId("keyword")
     private final TextField editKeywordField = new TextField();
-    @PropertyId("userKeyword")
+    @PropertyId("userName")
     private final TextField editUserField = new TextField();
     Button btEditorSave = new Button("Speichern");
     Button btEditorCancel = new Button("Abbrechen");
     Collection<Button> editButtons = Collections.newSetFromMap(new WeakHashMap<>());
 
-    public KeywordView(@Autowired KeywordRepository keywordRepository, @Autowired AddKeywordDialog keywordDialog) {
+    public KeywordView(@Autowired KeywordRepository keywordRepository, @Autowired AddKeywordDialog keywordDialog, @Autowired LDAPRepository ldapRepository) {
         binder.forMemberField(editKeywordField);
         binder.forMemberField(editUserField);
         binder.bindInstanceFields(this);
@@ -73,7 +74,7 @@ public class KeywordView extends BaseView {
         grKeywords.addColumn(keyword -> keyword.getKeyword() == null ? "Kein Schlüsselbegriff hinterlegt" : keyword.getKeyword())
                 .setEditorComponent(editKeywordField)
                 .setHeader("Schlüsselbegriff");
-        grKeywords.addColumn(keyword -> keyword.getUserKeyword() == null ? "Kein Name hinterlegt" : keyword.getUserKeyword())
+        grKeywords.addColumn(keyword -> keyword.getUserName() == null ? "Kein Name hinterlegt" : keyword.getUserName())
                 .setEditorComponent(editUserField)
                 .setHeader("User");
         grKeywords.addComponentColumn(keyword -> {

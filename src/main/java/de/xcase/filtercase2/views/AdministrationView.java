@@ -91,7 +91,7 @@ public class AdministrationView extends BaseView {
 
         Grid<Keyword> gridKeyword = new Grid();
         gridKeyword.addColumn(Keyword::getKeyword).setHeader("Schlüsselbegriff");
-        gridKeyword.addColumn(Keyword::getUserKeyword).setHeader("gesetzt durch");
+        gridKeyword.addColumn(Keyword::getUserName).setHeader("gesetzt durch");
         gridKeyword.addColumn(Keyword::getStatus).setHeader("Status");
 
         content.add(gridKeyword);

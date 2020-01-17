@@ -4,6 +4,7 @@ import com.vaadin.flow.server.ServletHelper;
 import com.vaadin.flow.shared.ApplicationConstants;
 import de.xcase.filtercase2.views.ErrorView;
 import de.xcase.filtercase2.views.LoginView;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -12,6 +13,7 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.ldap.authentication.ad.ActiveDirectoryLdapAuthenticationProvider;
 import org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint;
 
@@ -81,7 +83,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
              more info: https://docs.spring.io/spring-security/site/docs/4.0.x/reference/html/anonymous.html
              */
     }
-
+    /**
     @Override
     protected void configure(AuthenticationManagerBuilder auth) {
         ActiveDirectoryLdapAuthenticationProvider activeDirectoryLdapAuthenticationProvider =
@@ -94,7 +96,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         activeDirectoryLdapAuthenticationProvider.setConvertSubErrorCodesToExceptions(true);
         auth.authenticationProvider(activeDirectoryLdapAuthenticationProvider);
     }
-
+    **/
     /**
      * Checks if a class is a public navigation target.
      *
@@ -117,6 +119,15 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         return super.authenticationManagerBean();
     }
 
+    @Autowired
+    public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
+        // user and pass: admin
+        // TODO Remove hardcoded login
+        auth
+                .inMemoryAuthentication().passwordEncoder(new BCryptPasswordEncoder())
+                .withUser("admin").password("$2a$10$obstjyWMAVfsNoKisfyCjO/DNfO9OoMOKNt5a6GRlVS7XNUzYuUbO").authorities("X-CASE-Benutzer");
+    }
+
     /**
      * Tests if the request is an internal framework request. The test consists of
      * checking if the request parameter is present and if its value is consistent
@@ -131,9 +142,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 && Stream.of(ServletHelper.RequestType.values()).anyMatch(r -> r.getIdentifier().equals(parameterValue));
     }
 
+    /**
     @Bean
     public ActiveDirectoryLdapAuthenticationProvider activeDirectoryLdapAuthenticationProvider() {
         return new ActiveDirectoryLdapAuthenticationProvider(null, "ldap://192.168.108.21:389/");
     }
+    **/
 
 }
