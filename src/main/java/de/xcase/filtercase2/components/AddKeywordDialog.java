@@ -43,6 +43,7 @@ public class AddKeywordDialog extends Dialog {
         btAdd.addClickListener(event -> {
             Keyword keyword = new Keyword();
             keyword.setKeyword(tfKeyword.getValue());
+            //TODO Automatic User assignment ist not working.
             //keyword.setUserName(((User)SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUsername());
             if(keywordRepository.findByKeyword(tfKeyword.getValue()) != null) {
                 Notification.show("Dieser Eintrag existiert bereits");

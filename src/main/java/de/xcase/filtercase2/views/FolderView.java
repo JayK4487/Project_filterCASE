@@ -43,7 +43,7 @@ public class FolderView extends BaseView {
     // For Editor
     private final Binder<Folder> binder = new Binder<>(Folder.class);
     @PropertyId("sourceFolder")
-    private final TextField editSourceFolderField = new TextField();
+    private final TextField SourceFolderField = new TextField();
     @PropertyId("destinationFolder")
     private final TextField editDestinationFolderField = new TextField();
     @PropertyId("user")
@@ -53,7 +53,7 @@ public class FolderView extends BaseView {
     Collection<Button> editButtons = Collections.newSetFromMap(new WeakHashMap<>());
 
     public FolderView(@Autowired FolderRepository usedFolderRepository, @Autowired AddFolderDialog folderDialog, @Autowired LDAPRepository ldapRepository) {
-        binder.forMemberField(editSourceFolderField);
+        //binder.forMemberField(SourceFolderField);
         binder.forMemberField(editDestinationFolderField);
         binder.forMemberField(editUserField);
         binder.bindInstanceFields(this);
@@ -76,8 +76,12 @@ public class FolderView extends BaseView {
 
         cPanel.getElement().getStyle().set("width", "100%");
 
-        grUsedFolder.addColumn(usedFolder -> usedFolder.getSourceFolder() == null ? "Kein Ordner hinterlegt" : usedFolder.getSourceFolder())
-                .setEditorComponent(editSourceFolderField)
+        /**
+         * Disabled editing of the SourceFolderField. It will always be the same source folder.
+         */
+        //grUsedFolder.addColumn(usedFolder -> usedFolder.getSourceFolder())
+        grUsedFolder.addColumn(usedFolder -> usedFolder.getSourceFolder() == null ? "\\X-CASE\\XING" : usedFolder.getSourceFolder())
+                //.setEditorComponent(SourceFolderField)
                 .setHeader("Quellordner");
         grUsedFolder.addColumn(usedFolder ->  usedFolder.getDestinationFolder() == null ? "Kein Zielordner hinterlegt" : usedFolder.getDestinationFolder())
                 .setEditorComponent(editDestinationFolderField)

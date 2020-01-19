@@ -11,6 +11,8 @@ import de.xcase.filtercase2.backend.entities.Folder;
 import de.xcase.filtercase2.backend.respositories.LDAPRepository;
 import de.xcase.filtercase2.backend.respositories.FolderRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Component;
 
 
@@ -37,14 +39,13 @@ public class AddFolderDialog extends Dialog {
                btAdd.setEnabled(false);
             }
         });
-        //Todo Add function is still incomplete. I deleted the option to add a new sourceFolder because it will be always the same sourceFolder.
         btAdd.setEnabled(false);
         btAdd.addClickListener(event -> {
             Folder folder = new Folder();
             folder.setDestinationFolder(tfDestinationFolder.getValue());
-            //usedFolder.setUser(((User) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUsername());
+            //TODO Automatic User assignment ist not working.
+            //folder.setUser(((User) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUsername());
             if (usedFolderRepository.findByDestinationFolder(tfDestinationFolder.getValue()) != null) {
-                usedFolderRepository.save(folder);
                 Notification.show("Dieser Eintrag existiert bereits");
             } else {
                 usedFolderRepository.save(folder);
