@@ -5,6 +5,8 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
 
 @Entity
 public class Keyword {
@@ -30,6 +32,9 @@ public class Keyword {
      */
     @Column(name = "status")
     private Boolean status;
+
+    @ManyToOne
+    private Folder folder;
 
     public Long getId() {
         return id;
@@ -61,5 +66,13 @@ public class Keyword {
 
     public void setStatus(Boolean status) {
         this.status = status;
+    }
+
+    public Folder getFolder() {
+        return folder;
+    }
+
+    public void setFolder(Folder folder) {
+        this.folder = folder;
     }
 }

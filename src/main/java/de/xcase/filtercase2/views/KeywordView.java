@@ -1,6 +1,7 @@
 package de.xcase.filtercase2.views;
 
 import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.dependency.JsModule;
 import com.vaadin.flow.component.dependency.NpmPackage;
 import com.vaadin.flow.component.grid.Grid;
@@ -13,7 +14,9 @@ import com.vaadin.flow.data.binder.Binder;
 import com.vaadin.flow.data.binder.PropertyId;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
+import de.xcase.filtercase2.backend.entities.Folder;
 import de.xcase.filtercase2.backend.entities.Keyword;
+import de.xcase.filtercase2.backend.respositories.FolderRepository;
 import de.xcase.filtercase2.backend.respositories.KeywordRepository;
 import de.xcase.filtercase2.backend.respositories.LDAPRepository;
 import de.xcase.filtercase2.components.AddKeywordDialog;
@@ -46,13 +49,18 @@ public class KeywordView extends BaseView {
     private final TextField editKeywordField = new TextField();
     @PropertyId("userName")
     private final TextField editUserField = new TextField();
+    @PropertyId("folder")
+    private final ComboBox<Folder> cbFolder =  new ComboBox<>();
     Button btEditorSave = new Button("Speichern");
     Button btEditorCancel = new Button("Abbrechen");
     Collection<Button> editButtons = Collections.newSetFromMap(new WeakHashMap<>());
 
-    public KeywordView(@Autowired KeywordRepository keywordRepository, @Autowired AddKeywordDialog keywordDialog, @Autowired LDAPRepository ldapRepository) {
+    public KeywordView(@Autowired KeywordRepository keywordRepository, @Autowired AddKeywordDialog keywordDialog, @Autowired LDAPRepository ldapRepository, @Autowired FolderRepository folderRepository) {
+        cbFolder.setItems(folderRepository.findAll());
+        cbFolder.setItemLabelGenerator(Folder::getDestinationFolder);
         binder.forMemberField(editKeywordField);
         binder.forMemberField(editUserField);
+        binder.forMemberField(cbFolder);
         binder.bindInstanceFields(this);
 
         btEditorSave.addClickListener(click -> grKeywords.getEditor().save());
@@ -79,6 +87,9 @@ public class KeywordView extends BaseView {
         grKeywords.addColumn(keyword -> keyword.getUserName() == null ? "Kein Name hinterlegt" : keyword.getUserName())
                 .setEditorComponent(editUserField)
                 .setHeader("User");
+        grKeywords.addColumn(keyword -> keyword.getFolder() == null ? "Kein Ordner hinterlegt" : keyword.getFolder().getDestinationFolder() )
+                .setEditorComponent(cbFolder)
+                .setHeader("Ordner");
         grKeywords.addComponentColumn(keyword -> {
             Button button = new Button("Bearbeiten");
             button.addClickListener(click -> {

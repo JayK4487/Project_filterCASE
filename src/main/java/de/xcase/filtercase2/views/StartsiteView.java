@@ -16,6 +16,7 @@ import de.xcase.filtercase2.backend.respositories.KeywordRepository;
 import de.xcase.filtercase2.backend.respositories.LDAPRepository;
 import de.xcase.filtercase2.components.AppRouterLayout;
 import de.xcase.filtercase2.components.Card;
+import de.xcase.filtercase2.components.Executor;
 import de.xcase.filtercase2.components.RuntimeVariables;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -32,8 +33,6 @@ public class StartsiteView extends BaseView {
     public static final String VIEW_NAME = "StartsiteView";
 
     public StartsiteView(@Autowired LDAPRepository ldapRepository, @Autowired RuntimeVariables runtimeVariables, @Autowired KeywordRepository keywordRepository, @Autowired EMailAdressesRespository eMailAdressesRespository) {
-        ldapRepository.findAll();
-
         HorizontalLayout hl1 = new HorizontalLayout();
 
         Card cardpanel1 = new Card("Überblick");

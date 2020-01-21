@@ -5,6 +5,9 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 public class Folder {
@@ -30,6 +33,9 @@ public class Folder {
      */
     @Column(name = "user")
     private String user;
+
+    @OneToMany(mappedBy = "folder")
+    private List<Keyword> keywords = new ArrayList<>();
 
     public Long getId() {
         return id;
@@ -61,5 +67,23 @@ public class Folder {
 
     public void setUser(String user) {
         this.user = user;
+    }
+
+    public List<Keyword> getKeywords() {
+        return keywords;
+    }
+
+    public void setKeywords(List<Keyword> keywords) {
+        this.keywords = keywords;
+    }
+
+    public void addKeyword(final Keyword keyword) {
+        if (!keywords.contains(keyword)){
+            keywords.add(keyword);
+        }
+    }
+
+    public void removeKeyword(final Keyword keyword) {
+        keywords.remove(keyword);
     }
 }
