@@ -76,14 +76,7 @@ public class FolderView extends BaseView {
 
         cPanel.getElement().getStyle().set("width", "100%");
 
-        /**
-         * Disabled editing of the SourceFolderField. It will always be the same source folder.
-         */
-        //grUsedFolder.addColumn(usedFolder -> usedFolder.getSourceFolder())
-        grUsedFolder.addColumn(usedFolder -> usedFolder.getSourceFolder() == null ? "\\X-CASE\\XING" : usedFolder.getSourceFolder())
-                //.setEditorComponent(SourceFolderField)
-                .setHeader("Quellordner");
-        grUsedFolder.addColumn(usedFolder ->  usedFolder.getDestinationFolder() == null ? "Kein Zielordner hinterlegt" : usedFolder.getDestinationFolder())
+        grUsedFolder.addColumn(usedFolder -> usedFolder.getDestinationFolder() == null ? "Kein Zielordner hinterlegt" : usedFolder.getDestinationFolder())
                 .setEditorComponent(editDestinationFolderField)
                 .setHeader("Zielordner");
         grUsedFolder.addColumn(usedFolder -> usedFolder.getUser() == null ? "Kein Name hinterlegt" : usedFolder.getUser())
