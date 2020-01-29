@@ -32,7 +32,14 @@ public class StartsiteView extends BaseView {
 
     public static final String VIEW_NAME = "StartsiteView";
 
-    public StartsiteView(@Autowired LDAPRepository ldapRepository, @Autowired RuntimeVariables runtimeVariables, @Autowired KeywordRepository keywordRepository, @Autowired EMailAdressesRespository eMailAdressesRespository) {
+    @Autowired
+    private Executor executor;
+
+    public StartsiteView(
+            @Autowired RuntimeVariables runtimeVariables,
+            @Autowired KeywordRepository keywordRepository,
+            @Autowired EMailAdressesRespository eMailAdressesRespository
+    ) {
         HorizontalLayout hl1 = new HorizontalLayout();
 
         Card cardpanel1 = new Card("Überblick");
@@ -99,6 +106,7 @@ public class StartsiteView extends BaseView {
         content.setSizeFull();
 
         Button button = new Button("Starten");
+        button.addClickListener(click -> executor.execute());
         Label message1 = new Label(runtimeVariables.getLastManualRun() == null ? "Seit Start hat noch kein Suchlauf stattgefunden." : runtimeVariables.getLastManualRun().toString());
 
         content.add(button);

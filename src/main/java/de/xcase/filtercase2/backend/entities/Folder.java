@@ -2,6 +2,7 @@ package de.xcase.filtercase2.backend.entities;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -34,7 +35,7 @@ public class Folder {
     @Column(name = "user")
     private String user;
 
-    @OneToMany(mappedBy = "folder")
+    @OneToMany(mappedBy = "folder", fetch = FetchType.EAGER)
     private List<Keyword> keywords = new ArrayList<>();
 
     public Long getId() {
