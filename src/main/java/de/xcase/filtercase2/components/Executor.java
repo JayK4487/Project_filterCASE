@@ -58,12 +58,15 @@ public class Executor {
     @Autowired
     private MailContentBuilder mailContentBuilder;
 
+    @Autowired
+    private RuntimeVariables runtimeVariables;
+
     private final HashMap<String, List<String>> folderMap = new HashMap<>();
 
     private ExchangeService service;
 
     public void execute()  {
-        final List<de.xcase.filtercase2.backend.entities.Folder> targetFolders = new ArrayList<>();
+        Integer totalMails = 0;
 
         //Set service parameter
         try {
@@ -110,7 +113,7 @@ public class Executor {
             }
 
             for(Item mail: foundMails.getItems()) {
-                processes++;
+                totalMails++;
                 try {
                     mail.load();
                     String body = mail.getBody().toString();
@@ -132,6 +135,7 @@ public class Executor {
             }
         } while ((foundMails.isMoreAvailable()));
 
+
         //TODO uncomment
         /*
         for (de.xcase.filtercase2.backend.entities.Folder folder: mailMap.keySet()) {
@@ -150,7 +154,7 @@ public class Executor {
 
         //Send mails
         Map<String, String> mailValues = new HashMap<>();
-        mailValues.put("totalNumber", "0");
+        mailValues.put("totalNumber", String.valueOf(totalMails));
         mailValues.put("deletedNumber", "0");
         mailValues.put("filteredNumber", "0");
         mailValues.put("ambiguousNumber", "0");
@@ -165,6 +169,9 @@ public class Executor {
             };
             mailClient.prepareAndSend(messagePreparator);
         });
+
+        //Set the runtime variables
+        runtimeVariables.totalMails += totalMails;
     }
 
     private Folder findFolder(de.xcase.filtercase2.backend.entities.Folder folderToSearch) {
