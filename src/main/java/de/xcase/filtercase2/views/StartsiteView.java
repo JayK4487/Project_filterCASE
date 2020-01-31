@@ -1,6 +1,7 @@
 package de.xcase.filtercase2.views;
 
 import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.dependency.CssImport;
 import com.vaadin.flow.component.dependency.JsModule;
@@ -8,6 +9,7 @@ import com.vaadin.flow.component.dependency.NpmPackage;
 import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.component.page.Page;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import de.xcase.filtercase2.backend.entities.EMailAdress;
@@ -39,6 +41,7 @@ public class StartsiteView extends BaseView {
             @Autowired RuntimeVariables runtimeVariables,
             @Autowired KeywordRepository keywordRepository,
             @Autowired EMailAdressesRespository eMailAdressesRespository
+
     ) {
         HorizontalLayout hl1 = new HorizontalLayout();
 
@@ -59,7 +62,6 @@ public class StartsiteView extends BaseView {
         Card cardpanel4 = new Card("Aktuelle E-Mailadressen für Benachrichtigungen:");
         cardpanel4.getElement().getStyle().set("width", "50%");
         cardpanel4.addContent(buildNotifications(eMailAdressesRespository));
-        //.addAction(new Button("Mach was!"));
 
         hl1.add(cardpanel1, cardpanel2);
         hl1.setWidthFull();
@@ -77,15 +79,15 @@ public class StartsiteView extends BaseView {
 
         Label message1 = new Label(runtimeVariables.getLastRun() == null ? "Seit Start hat noch kein Suchlauf stattgefunden." : runtimeVariables.getLastRun().toString());
         Label message2 = new Label("Insgesamt abgerufene E-Mails: " + String.valueOf(runtimeVariables.getTotalMails()));
-        Label message3 = new Label("Gelöschte E-Mails: " + String.valueOf(runtimeVariables.getDeletedMails()));
+        Label message3 = new Label("Uneindeutige E-Mails: " + String.valueOf(runtimeVariables.getDeletedMails()));
         Label message4 = new Label("Weitergeleitete E-Mails: " + String.valueOf(runtimeVariables.getDistributedMails()));
-        Label message5 = new Label("Uneindeutige E-Mails: " + String.valueOf(runtimeVariables.getAmbiguousMails()));
+        //Label message5 = new Label("Uneindeutige E-Mails: " + String.valueOf(runtimeVariables.getAmbiguousMails()));
 
         content.add(message1);
         content.add(message2);
         content.add(message3);
         content.add(message4);
-        content.add(message5);
+        //content.add(message5);
 
         return content;
 
@@ -106,12 +108,14 @@ public class StartsiteView extends BaseView {
         content.setSizeFull();
 
         Button button = new Button("Starten");
-        button.addClickListener(click -> executor.execute());
-        Label message1 = new Label(runtimeVariables.getLastManualRun() == null ? "Seit Start hat noch kein Suchlauf stattgefunden." : runtimeVariables.getLastManualRun().toString());
+        button.addClickListener(click -> {
+            executor.execute();
+            getUI().ifPresent(ui -> ui.getPage().reload());
 
+        });
+        Label message1 = new Label(runtimeVariables.getLastManualRun() == null ? "Seit Start hat noch kein Suchlauf stattgefunden." : String.valueOf(runtimeVariables.getLastRun()));
         content.add(button);
         content.add(message1);
-
         return content;
     }
 

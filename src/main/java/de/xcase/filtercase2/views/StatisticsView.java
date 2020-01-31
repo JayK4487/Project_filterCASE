@@ -44,15 +44,15 @@ public class StatisticsView extends BaseView {
 
         Label message1 = new Label(runtimeVariables.getLastRun() == null ? "Seit Start hat noch kein Suchlauf stattgefunden." : runtimeVariables.getLastRun().toString());
         Label message2 = new Label("Insgesamt abgerufene E-Mails: " + String.valueOf(runtimeVariables.getTotalMails()));
-        Label message3 = new Label("Gelöschte E-Mails: " + String.valueOf(runtimeVariables.getDeletedMails()));
+        Label message3 = new Label("Uneindeutige E-Mails: " + String.valueOf(runtimeVariables.getDeletedMails()));
         Label message4 = new Label("Weitergeleitete E-Mails: " + String.valueOf(runtimeVariables.getDistributedMails()));
-        Label message5 = new Label("Uneindeutige E-Mails: " + String.valueOf(runtimeVariables.getAmbiguousMails()));
+        //Label message5 = new Label("Uneindeutige E-Mails: " + String.valueOf(runtimeVariables.getAmbiguousMails()));
 
         content.add(message1);
         content.add(message2);
         content.add(message3);
         content.add(message4);
-        content.add(message5);
+        //content.add(message5);
 
         return content;
     }

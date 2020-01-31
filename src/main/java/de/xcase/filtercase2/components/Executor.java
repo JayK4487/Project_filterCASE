@@ -1,11 +1,16 @@
 package de.xcase.filtercase2.components;
 
+import com.vaadin.flow.component.notification.Notification;
+import com.vaadin.flow.component.page.Page;
+import de.xcase.filtercase2.backend.entities.EMailAdress;
 import de.xcase.filtercase2.backend.entities.Keyword;
 import de.xcase.filtercase2.backend.respositories.EMailAdressesRespository;
 import de.xcase.filtercase2.backend.respositories.FolderRepository;
 import de.xcase.filtercase2.backend.respositories.KeywordRepository;
 import de.xcase.filtercase2.utility.MailClient;
 import de.xcase.filtercase2.utility.MailContentBuilder;
+import de.xcase.filtercase2.views.StartsiteView;
+import de.xcase.filtercase2.views.StatisticsView;
 import microsoft.exchange.webservices.data.core.ExchangeService;
 import microsoft.exchange.webservices.data.core.enumeration.property.WellKnownFolderName;
 import microsoft.exchange.webservices.data.core.exception.service.local.ServiceLocalException;
@@ -27,7 +32,9 @@ import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.mail.javamail.MimeMessagePreparator;
 import org.springframework.stereotype.Service;
 
+import javax.validation.constraints.Email;
 import java.net.URI;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -67,11 +74,13 @@ public class Executor {
 
     public void execute()  {
         Integer totalMails = 0;
+        //Integer deletedMails = 0; //Uneindeutige Mails
+        Integer distributedMails = 0;
 
         //Set service parameter
         try {
             service = new ExchangeService();
-            ExchangeCredentials credentials = new WebCredentials("NUTZERNAME", "PASSWORT", "X-CASE");
+            ExchangeCredentials credentials = new WebCredentials("NUTZER", "PASSWORT.", "X-CASE");
             service.setCredentials(credentials);
             service.setUrl(new URI(EWS_URL));
             service.setPreAuthenticate(true);
@@ -114,6 +123,7 @@ public class Executor {
 
             for(Item mail: foundMails.getItems()) {
                 totalMails++;
+
                 try {
                     mail.load();
                     String body = mail.getBody().toString();
@@ -137,27 +147,25 @@ public class Executor {
 
 
         //TODO uncomment
-        /*
         for (de.xcase.filtercase2.backend.entities.Folder folder: mailMap.keySet()) {
             Folder destination = findFolder(makeFolderPathList(folder.getDestinationFolder()));
-            try {
+          try {
                 for (EmailMessage emailMessage: mailMap.get(folder)) {
-                    emailMessage.copy(destination.getId());
+                    //emailMessage.copy(destination.getId());
+                    distributedMails++;
                 }
-            } catch (ServiceLocalException e) {
-                e.printStackTrace();
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
-        */
+
 
         //Send mails
         Map<String, String> mailValues = new HashMap<>();
         mailValues.put("totalNumber", String.valueOf(totalMails));
-        mailValues.put("deletedNumber", "0");
-        mailValues.put("filteredNumber", "0");
-        mailValues.put("ambiguousNumber", "0");
+        mailValues.put("deletedNumber", "");
+        mailValues.put("filteredNumber", String.valueOf(distributedMails));
+        //mailValues.put("ambiguousNumber", "0");
 
         eMailAdressesRespository.findAll().forEach(eMailAdress -> {
             MimeMessagePreparator messagePreparator = mimeMessage -> {
@@ -171,8 +179,11 @@ public class Executor {
         });
 
         //Set the runtime variables
-        runtimeVariables.totalMails += totalMails;
+        runtimeVariables.setTotalMails(runtimeVariables.getTotalMails() + totalMails);
+        //runtimeVariables.setDeletedMails(runtimeVariables.getDeletedMails() + deletedMails);
+        runtimeVariables.setDistributedMails(runtimeVariables.getDistributedMails() + distributedMails);
     }
+
 
     private Folder findFolder(de.xcase.filtercase2.backend.entities.Folder folderToSearch) {
         return findFolder(folderMap.get(folderToSearch.getDestinationFolder()));
@@ -209,7 +220,11 @@ public class Executor {
         try {
             FindFoldersResults foundFolders = searchFolder.findFolders(folderSearch, new FolderView(1));
             if (path.size() == 1) {
-                return foundFolders.getFolders().get(0);
+                if(foundFolders.getFolders().isEmpty()) {
+                    return searchFolder;
+                } else {
+                    return foundFolders.getFolders().get(0);
+                }
             } else {
                 return resolveFolder(foundFolders.getFolders().get(0),  path.subList(1, path.size()));
             }

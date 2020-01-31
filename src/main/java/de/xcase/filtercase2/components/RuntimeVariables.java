@@ -63,4 +63,5 @@ public class RuntimeVariables {
     public void setAmbiguousMails(int ambiguousMails) {
         this.ambiguousMails = ambiguousMails;
     }
+
 }
