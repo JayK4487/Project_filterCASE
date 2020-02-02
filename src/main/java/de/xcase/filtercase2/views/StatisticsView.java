@@ -3,7 +3,6 @@ package de.xcase.filtercase2.views;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.dependency.JsModule;
 import com.vaadin.flow.component.dependency.NpmPackage;
-import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
@@ -44,7 +43,7 @@ public class StatisticsView extends BaseView {
 
         Label message1 = new Label(runtimeVariables.getLastRun() == null ? "Seit Start hat noch kein Suchlauf stattgefunden." : runtimeVariables.getLastRun().toString());
         Label message2 = new Label("Insgesamt abgerufene E-Mails: " + String.valueOf(runtimeVariables.getTotalMails()));
-        Label message3 = new Label("Uneindeutige E-Mails: " + String.valueOf(runtimeVariables.getDeletedMails()));
+        Label message3 = new Label("Uneindeutige E-Mails: " + String.valueOf(runtimeVariables.getNoKeywordMatchingMails()));
         Label message4 = new Label("Weitergeleitete E-Mails: " + String.valueOf(runtimeVariables.getDistributedMails()));
         //Label message5 = new Label("Uneindeutige E-Mails: " + String.valueOf(runtimeVariables.getAmbiguousMails()));
 

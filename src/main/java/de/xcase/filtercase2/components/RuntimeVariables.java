@@ -12,7 +12,7 @@ public class RuntimeVariables {
     LocalDateTime lastRun;
     LocalDateTime lastManualRun;
     int totalMails;
-    int deletedMails;
+    int noKeywordMatchingMails;
     int distributedMails;
     int ambiguousMails;
 
@@ -40,12 +40,12 @@ public class RuntimeVariables {
         this.totalMails = totalMails;
     }
 
-    public int getDeletedMails() {
-        return deletedMails;
+    public int getNoKeywordMatchingMails() {
+        return noKeywordMatchingMails;
     }
 
-    public void setDeletedMails(int deletedMails) {
-        this.deletedMails = deletedMails;
+    public void setNoKeywordMatchingMails(int noKeywordMatchingMails) {
+        this.noKeywordMatchingMails = noKeywordMatchingMails;
     }
 
     public int getDistributedMails() {

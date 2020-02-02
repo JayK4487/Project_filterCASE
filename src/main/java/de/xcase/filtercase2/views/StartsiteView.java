@@ -1,7 +1,6 @@
 package de.xcase.filtercase2.views;
 
 import com.vaadin.flow.component.Component;
-import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.dependency.CssImport;
 import com.vaadin.flow.component.dependency.JsModule;
@@ -9,13 +8,11 @@ import com.vaadin.flow.component.dependency.NpmPackage;
 import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
-import com.vaadin.flow.component.page.Page;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import de.xcase.filtercase2.backend.entities.EMailAdress;
 import de.xcase.filtercase2.backend.respositories.EMailAdressesRespository;
 import de.xcase.filtercase2.backend.respositories.KeywordRepository;
-import de.xcase.filtercase2.backend.respositories.LDAPRepository;
 import de.xcase.filtercase2.components.AppRouterLayout;
 import de.xcase.filtercase2.components.Card;
 import de.xcase.filtercase2.components.Executor;
@@ -79,7 +76,7 @@ public class StartsiteView extends BaseView {
 
         Label message1 = new Label(runtimeVariables.getLastRun() == null ? "Seit Start hat noch kein Suchlauf stattgefunden." : runtimeVariables.getLastRun().toString());
         Label message2 = new Label("Insgesamt abgerufene E-Mails: " + String.valueOf(runtimeVariables.getTotalMails()));
-        Label message3 = new Label("Uneindeutige E-Mails: " + String.valueOf(runtimeVariables.getDeletedMails()));
+        Label message3 = new Label("Uneindeutige E-Mails: " + String.valueOf(runtimeVariables.getNoKeywordMatchingMails()));
         Label message4 = new Label("Weitergeleitete E-Mails: " + String.valueOf(runtimeVariables.getDistributedMails()));
         //Label message5 = new Label("Uneindeutige E-Mails: " + String.valueOf(runtimeVariables.getAmbiguousMails()));
 

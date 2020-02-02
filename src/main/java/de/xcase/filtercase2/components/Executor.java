@@ -1,16 +1,11 @@
 package de.xcase.filtercase2.components;
 
-import com.vaadin.flow.component.notification.Notification;
-import com.vaadin.flow.component.page.Page;
-import de.xcase.filtercase2.backend.entities.EMailAdress;
 import de.xcase.filtercase2.backend.entities.Keyword;
 import de.xcase.filtercase2.backend.respositories.EMailAdressesRespository;
 import de.xcase.filtercase2.backend.respositories.FolderRepository;
 import de.xcase.filtercase2.backend.respositories.KeywordRepository;
 import de.xcase.filtercase2.utility.MailClient;
 import de.xcase.filtercase2.utility.MailContentBuilder;
-import de.xcase.filtercase2.views.StartsiteView;
-import de.xcase.filtercase2.views.StatisticsView;
 import microsoft.exchange.webservices.data.core.ExchangeService;
 import microsoft.exchange.webservices.data.core.enumeration.property.WellKnownFolderName;
 import microsoft.exchange.webservices.data.core.exception.service.local.ServiceLocalException;
@@ -32,9 +27,7 @@ import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.mail.javamail.MimeMessagePreparator;
 import org.springframework.stereotype.Service;
 
-import javax.validation.constraints.Email;
 import java.net.URI;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -74,13 +67,14 @@ public class Executor {
 
     public void execute()  {
         Integer totalMails = 0;
-        //Integer deletedMails = 0; //Uneindeutige Mails
+        Integer noKeywordMatchingMails = 0;
         Integer distributedMails = 0;
+        List<EmailMessage> undefiniteMails = new ArrayList<>();
 
         //Set service parameter
         try {
             service = new ExchangeService();
-            ExchangeCredentials credentials = new WebCredentials("NUTZER", "PASSWORT.", "X-CASE");
+            ExchangeCredentials credentials = new WebCredentials("jgabriel", "Net333run.", "X-CASE");
             service.setCredentials(credentials);
             service.setUrl(new URI(EWS_URL));
             service.setPreAuthenticate(true);
@@ -123,22 +117,40 @@ public class Executor {
 
             for(Item mail: foundMails.getItems()) {
                 totalMails++;
+                Boolean foundEMails = false;
 
+                //Todo Fehler liegt hier. Er springt nicht in die Schleife.
                 try {
                     mail.load();
                     String body = mail.getBody().toString();
-                    for (de.xcase.filtercase2.backend.entities.Folder folder: mailMap.keySet()) {
+                    for (de.xcase.filtercase2.backend.entities.Folder folder : mailMap.keySet()) {
                         //find folders with matching keywords
-                        for (Keyword keyword: folder.getKeywords()) {
+                        for (Keyword keyword : folder.getKeywords()) {
                             if (body.contains(keyword.getKeyword())) {
-                                    List<EmailMessage> emailMessages = mailMap.get(folder);
+                                foundEMails = true;
+                                distributedMails++; //TODO Counting here only for testing
+                                List<EmailMessage> emailMessages = mailMap.get(folder);
                                 if (mail.getClass().equals(EmailMessage.class) && !emailMessages.contains(mail)) {
-                                    emailMessages.add((EmailMessage)mail);
+                                    emailMessages.add((EmailMessage) mail);
                                     break;
                                 }
                             }
                         }
+                        //find folders without matching keywords
+
+                        if (foundEMails == false) {
+                            /*
+                            List<EmailMessage> emailMessageWithoutKeyword = mailMap.get(folder);
+                            if (mail.getClass().equals(EmailMessage.class) && !emailMessageWithoutKeyword.contains(mail)) {
+                                emailMessageWithoutKeyword.add((EmailMessage) mail);
+                                undefiniteMails.addAll(emailMessageWithoutKeyword);
+                             */
+                            noKeywordMatchingMails++;
+                            break;
+                        }
                     }
+                //}
+
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -152,18 +164,17 @@ public class Executor {
           try {
                 for (EmailMessage emailMessage: mailMap.get(folder)) {
                     //emailMessage.copy(destination.getId());
-                    distributedMails++;
+                    //distributedMails++; //TODO Check
                 }
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
 
-
         //Send mails
         Map<String, String> mailValues = new HashMap<>();
         mailValues.put("totalNumber", String.valueOf(totalMails));
-        mailValues.put("deletedNumber", "");
+        mailValues.put("deletedNumber", String.valueOf(noKeywordMatchingMails));
         mailValues.put("filteredNumber", String.valueOf(distributedMails));
         //mailValues.put("ambiguousNumber", "0");
 
@@ -175,12 +186,12 @@ public class Executor {
                 messageHelper.setSubject("[filterCASE] Ergebnisbericht der letzten Filterung");
                 messageHelper.setText(mailContentBuilder.build(mailValues), true);
             };
-            mailClient.prepareAndSend(messagePreparator);
+            //mailClient.prepareAndSend(messagePreparator);
         });
 
         //Set the runtime variables
         runtimeVariables.setTotalMails(runtimeVariables.getTotalMails() + totalMails);
-        //runtimeVariables.setDeletedMails(runtimeVariables.getDeletedMails() + deletedMails);
+        runtimeVariables.setNoKeywordMatchingMails(runtimeVariables.getNoKeywordMatchingMails() + noKeywordMatchingMails);
         runtimeVariables.setDistributedMails(runtimeVariables.getDistributedMails() + distributedMails);
     }
 
