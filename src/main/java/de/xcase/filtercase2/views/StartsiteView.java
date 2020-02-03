@@ -19,6 +19,10 @@ import de.xcase.filtercase2.components.Executor;
 import de.xcase.filtercase2.components.RuntimeVariables;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.FormatStyle;
+
 /**
  * Home site of the app.
  */
@@ -74,7 +78,7 @@ public class StartsiteView extends BaseView {
         VerticalLayout content = new VerticalLayout();
         content.setSizeFull();
 
-        Label message1 = new Label(runtimeVariables.getLastRun() == null ? "Seit Start hat noch kein Suchlauf stattgefunden." : runtimeVariables.getLastRun().toString());
+        Label message1 = new Label(runtimeVariables.getLastRun() == null ? "Seit Start hat noch kein Suchlauf stattgefunden." : DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM).format(runtimeVariables.getLastRun()));
         Label message2 = new Label("Insgesamt abgerufene E-Mails: " + String.valueOf(runtimeVariables.getTotalMails()));
         Label message3 = new Label("Uneindeutige E-Mails: " + String.valueOf(runtimeVariables.getNoKeywordMatchingMails()));
         Label message4 = new Label("Weitergeleitete E-Mails: " + String.valueOf(runtimeVariables.getDistributedMails()));
@@ -110,7 +114,7 @@ public class StartsiteView extends BaseView {
             getUI().ifPresent(ui -> ui.getPage().reload());
 
         });
-        Label message1 = new Label(runtimeVariables.getLastManualRun() == null ? "Seit Start hat noch kein Suchlauf stattgefunden." : String.valueOf(runtimeVariables.getLastRun()));
+        Label message1 = new Label(runtimeVariables.getLastRun() == null ? "Seit Start hat noch kein Suchlauf stattgefunden." : DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM).format(runtimeVariables.getLastRun()));
         content.add(button);
         content.add(message1);
         return content;

@@ -8,6 +8,7 @@ import de.xcase.filtercase2.utility.MailClient;
 import de.xcase.filtercase2.utility.MailContentBuilder;
 import microsoft.exchange.webservices.data.core.ExchangeService;
 import microsoft.exchange.webservices.data.core.enumeration.property.WellKnownFolderName;
+import microsoft.exchange.webservices.data.core.enumeration.service.DeleteMode;
 import microsoft.exchange.webservices.data.core.exception.service.local.ServiceLocalException;
 import microsoft.exchange.webservices.data.core.service.folder.Folder;
 import microsoft.exchange.webservices.data.core.service.item.EmailMessage;
@@ -28,6 +29,9 @@ import org.springframework.mail.javamail.MimeMessagePreparator;
 import org.springframework.stereotype.Service;
 
 import java.net.URI;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.FormatStyle;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -69,7 +73,9 @@ public class Executor {
         Integer totalMails = 0;
         Integer noKeywordMatchingMails = 0;
         Integer distributedMails = 0;
-        List<EmailMessage> undefiniteMails = new ArrayList<>();
+        LocalDateTime startTime = LocalDateTime.now();
+        String lastRun = DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM).format(startTime);
+        //List<EmailMessage> undefiniteMails = new ArrayList<>();
 
         //Set service parameter
         try {
@@ -128,7 +134,6 @@ public class Executor {
                         for (Keyword keyword : folder.getKeywords()) {
                             if (body.contains(keyword.getKeyword())) {
                                 foundEMails = true;
-                                distributedMails++; //TODO Counting here only for testing
                                 List<EmailMessage> emailMessages = mailMap.get(folder);
                                 if (mail.getClass().equals(EmailMessage.class) && !emailMessages.contains(mail)) {
                                     emailMessages.add((EmailMessage) mail);
@@ -137,19 +142,10 @@ public class Executor {
                             }
                         }
                         //find folders without matching keywords
-
-                        if (foundEMails == false) {
-                            /*
-                            List<EmailMessage> emailMessageWithoutKeyword = mailMap.get(folder);
-                            if (mail.getClass().equals(EmailMessage.class) && !emailMessageWithoutKeyword.contains(mail)) {
-                                emailMessageWithoutKeyword.add((EmailMessage) mail);
-                                undefiniteMails.addAll(emailMessageWithoutKeyword);
-                             */
-                            noKeywordMatchingMails++;
-                            break;
-                        }
                     }
-                //}
+                    if (!foundEMails) {
+                        noKeywordMatchingMails++;
+                    }
 
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -164,7 +160,8 @@ public class Executor {
           try {
                 for (EmailMessage emailMessage: mailMap.get(folder)) {
                     //emailMessage.copy(destination.getId());
-                    //distributedMails++; //TODO Check
+                    //emailMessage.delete(DeleteMode.MoveToDeletedItems);
+                    distributedMails++;
                 }
             } catch (Exception e) {
                 e.printStackTrace();
@@ -177,6 +174,7 @@ public class Executor {
         mailValues.put("deletedNumber", String.valueOf(noKeywordMatchingMails));
         mailValues.put("filteredNumber", String.valueOf(distributedMails));
         //mailValues.put("ambiguousNumber", "0");
+        mailValues.put("lastRun", lastRun);
 
         eMailAdressesRespository.findAll().forEach(eMailAdress -> {
             MimeMessagePreparator messagePreparator = mimeMessage -> {
@@ -186,10 +184,11 @@ public class Executor {
                 messageHelper.setSubject("[filterCASE] Ergebnisbericht der letzten Filterung");
                 messageHelper.setText(mailContentBuilder.build(mailValues), true);
             };
-            //mailClient.prepareAndSend(messagePreparator);
+            mailClient.prepareAndSend(messagePreparator);
         });
 
         //Set the runtime variables
+        runtimeVariables.setLastRun(startTime);
         runtimeVariables.setTotalMails(runtimeVariables.getTotalMails() + totalMails);
         runtimeVariables.setNoKeywordMatchingMails(runtimeVariables.getNoKeywordMatchingMails() + noKeywordMatchingMails);
         runtimeVariables.setDistributedMails(runtimeVariables.getDistributedMails() + distributedMails);

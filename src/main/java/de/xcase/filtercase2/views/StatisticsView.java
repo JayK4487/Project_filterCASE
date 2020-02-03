@@ -14,6 +14,9 @@ import de.xcase.filtercase2.components.Card;
 import de.xcase.filtercase2.components.RuntimeVariables;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.time.format.DateTimeFormatter;
+import java.time.format.FormatStyle;
+
 @Route(value = StatisticsView.VIEW_NAME, layout = AppRouterLayout.class)
 @PageTitle(value = "Statistics")
 @NpmPackage(value = "@polymer/paper-card", version = "3.0.1")
@@ -41,7 +44,7 @@ public class StatisticsView extends BaseView {
         content.setSizeFull();
         content.setDefaultHorizontalComponentAlignment(FlexComponent.Alignment.AUTO);
 
-        Label message1 = new Label(runtimeVariables.getLastRun() == null ? "Seit Start hat noch kein Suchlauf stattgefunden." : runtimeVariables.getLastRun().toString());
+        Label message1 = new Label(runtimeVariables.getLastRun() == null ? "Seit Start hat noch kein Suchlauf stattgefunden." : DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM).format(runtimeVariables.getLastRun()));
         Label message2 = new Label("Insgesamt abgerufene E-Mails: " + String.valueOf(runtimeVariables.getTotalMails()));
         Label message3 = new Label("Uneindeutige E-Mails: " + String.valueOf(runtimeVariables.getNoKeywordMatchingMails()));
         Label message4 = new Label("Weitergeleitete E-Mails: " + String.valueOf(runtimeVariables.getDistributedMails()));
