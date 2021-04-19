@@ -25,7 +25,7 @@
         <spring-test.version>5.2.0.RELEASE</spring-test.version>
         <spring-security.version>5.2.1.RELEASE</spring-security.version>
         <spring-core.version>5.2.1.RELEASE</spring-core.version>
-        <vaadin.version>14.0.11</vaadin.version>
+        <vaadin.version>19.0.5</vaadin.version>
         <tomcat.version>8.5.37</tomcat.version>
     </properties>
 
